@@ -1,0 +1,41 @@
+<?php
+/**
+* @file
+* nexteuropa_user_management.install
+*/
+
+/**
+ * Implements hook_install().
+ */
+function nexteuropa_user_management_install() {
+  $name = 'User management';
+  $existing_role = user_role_load_by_name($name);
+  if (empty($existing_role)) {
+    $role = new stdClass();
+    $role->name = $name;
+    if (user_role_save($role) === FALSE) {
+      drupal_set_message(t('Role creation failed!'), 'error');
+      return;
+    }
+
+    // Do not use user_role_grant_permission() since it relies on
+    // hook_permission(), which will not run for this module if it is disabled.
+    db_merge('role_permission')
+      ->key(array(
+        'rid' => $role->rid,
+        'permission' => 'manage users nexteuropa roles views',
+        'module' => 'nexteuropa_user_management',
+      ))
+      ->execute();
+  }
+  else {
+    drupal_set_message(t("Special role already existing! Make sure you rename it ('$name') before install this module."), 'error');
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function nexteuropa_user_management_uninstall() {
+  user_role_delete('User management');
+}

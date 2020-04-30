@@ -1,0 +1,18 @@
+<?php
+/**
+ * @file
+ * Code for the NextEuropa Manage Roles feature.
+ */
+
+include_once 'nexteuropa_user_management.features.inc';
+
+/**
+ * Implements hook_permission().
+ */
+function nexteuropa_user_management_permission() {
+  return array(
+    'manage users nexteuropa roles views' => array(
+      'title' => t('Allow to manage users with nexteuropa manage roles views'),
+    ),
+  );
+}

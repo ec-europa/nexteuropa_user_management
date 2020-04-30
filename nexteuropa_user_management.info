@@ -1,0 +1,12 @@
+name = NextEuropa Manage Roles
+description = Provides a role with view to be able to manage the users.
+core = 7.x
+package = NextEuropa
+dependencies[] = features
+dependencies[] = views
+php = 5.6
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = openeuropa_user_management
+features_exclude[dependencies][ctools] = ctools
+multisite_version = 2.5
