@@ -27,7 +27,7 @@ function nexteuropa_user_management_views_default_views() {
   $handler->display->display_options['use_ajax'] = TRUE;
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'perm';
-  $handler->display->display_options['access']['perm'] = 'manage users nexteuropa roles views';
+  $handler->display->display_options['access']['perm'] = 'access nexteuropa user management views';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
   $handler->display->display_options['exposed_form']['type'] = 'basic';
@@ -118,17 +118,25 @@ function nexteuropa_user_management_views_default_views() {
   $handler->display->display_options['fields']['views_bulk_operations']['vbo_settings']['force_single'] = 0;
   $handler->display->display_options['fields']['views_bulk_operations']['vbo_settings']['entity_load_capacity'] = '10';
   $handler->display->display_options['fields']['views_bulk_operations']['vbo_operations'] = array(
-    'action::user_block_user_action' => array(
+    'action::nexteuropa_user_management_block_selected_user_action' => array(
       'selected' => 1,
-      'postpone_processing' => 1,
+      'postpone_processing' => 0,
       'skip_confirmation' => 0,
       'skip_permission_check' => 0,
       'override_label' => 0,
       'label' => '',
     ),
-    'action::views_bulk_operations_user_roles_action' => array(
+    'action::nexteuropa_user_management_change_user_roles_action' => array(
       'selected' => 1,
-      'postpone_processing' => 1,
+      'postpone_processing' => 0,
+      'skip_confirmation' => 0,
+      'skip_permission_check' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::nexteuropa_user_management_unblock_selected_user_action' => array(
+      'selected' => 1,
+      'postpone_processing' => 0,
       'skip_confirmation' => 0,
       'skip_permission_check' => 0,
       'override_label' => 0,
@@ -142,7 +150,6 @@ function nexteuropa_user_management_views_default_views() {
   $handler->display->display_options['fields']['name']['label'] = 'Displayed name';
   $handler->display->display_options['fields']['name']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['name']['alter']['ellipsis'] = FALSE;
-  $handler->display->display_options['fields']['name']['link_to_user'] = FALSE;
   /* Field: User: First name */
   $handler->display->display_options['fields']['field_firstname']['id'] = 'field_firstname';
   $handler->display->display_options['fields']['field_firstname']['table'] = 'field_data_field_firstname';
@@ -183,6 +190,24 @@ function nexteuropa_user_management_views_default_views() {
   $handler->display->display_options['fields']['edit_node']['table'] = 'users';
   $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['label'] = 'Operations';
+  /* Contextual filter: Exclude current user from list */
+  $handler->display->display_options['arguments']['uid']['id'] = 'uid';
+  $handler->display->display_options['arguments']['uid']['table'] = 'users';
+  $handler->display->display_options['arguments']['uid']['field'] = 'uid';
+  $handler->display->display_options['arguments']['uid']['ui_name'] = 'Exclude current user from list';
+  $handler->display->display_options['arguments']['uid']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['uid']['exception']['value'] = '';
+  $handler->display->display_options['arguments']['uid']['default_argument_type'] = 'current_user';
+  $handler->display->display_options['arguments']['uid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['uid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['uid']['summary_options']['items_per_page'] = '25';
+  $handler->display->display_options['arguments']['uid']['specify_validation'] = TRUE;
+  $handler->display->display_options['arguments']['uid']['validate']['type'] = 'user';
+  $handler->display->display_options['arguments']['uid']['validate_options']['restrict_roles'] = TRUE;
+  $handler->display->display_options['arguments']['uid']['validate_options']['roles'] = array(
+    9 => '9',
+  );
+  $handler->display->display_options['arguments']['uid']['not'] = TRUE;
   /* Filter criterion: User: Name */
   $handler->display->display_options['filters']['uid']['id'] = 'uid';
   $handler->display->display_options['filters']['uid']['table'] = 'users';
@@ -295,6 +320,13 @@ function nexteuropa_user_management_views_default_views() {
     5 => 0,
     8 => 0,
   );
+  /* Filter criterion: Filter out anonymous and user 1 */
+  $handler->display->display_options['filters']['uid_raw']['id'] = 'uid_raw';
+  $handler->display->display_options['filters']['uid_raw']['table'] = 'users';
+  $handler->display->display_options['filters']['uid_raw']['field'] = 'uid_raw';
+  $handler->display->display_options['filters']['uid_raw']['ui_name'] = 'Filter out anonymous and user 1';
+  $handler->display->display_options['filters']['uid_raw']['operator'] = '>';
+  $handler->display->display_options['filters']['uid_raw']['value']['value'] = '1';
 
   /* Display: NextEuropa: User management */
   $handler = $view->new_display('page', 'NextEuropa: User management', 'neum');

@@ -3,6 +3,7 @@ description = Provides a role with view to be able to manage the users.
 core = 7.x
 package = NextEuropa
 dependencies[] = ctools
+dependencies[] = entity
 dependencies[] = features
 dependencies[] = views
 dependencies[] = views_bulk_operations

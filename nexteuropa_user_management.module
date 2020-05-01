@@ -5,14 +5,54 @@
  */
 
 include_once 'nexteuropa_user_management.features.inc';
+include_once 'nexteuropa_user_management.actions.inc';
 
 /**
  * Implements hook_permission().
  */
 function nexteuropa_user_management_permission() {
   return array(
-    'manage users nexteuropa roles views' => array(
-      'title' => t('Allow to manage users with nexteuropa manage roles views'),
+    'access nexteuropa user management views' => array(
+      'title' => t('Allow to access nexteuropa user management views'),
+    ),
+    'nexteuropa manage users non restricted operations' => array(
+      'title' => t('Allow to manage users with non restricted operations'),
     ),
   );
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function nexteuropa_user_management_entity_info_alter(&$entity_info) {
+  $entity_info['user']['access callback'] = 'nexteuropa_user_management_metadata_user_access';
+}
+
+/**
+ * Access callback for the user entity.
+ */
+function nexteuropa_user_management_metadata_user_access($op, $entity = NULL, $account = NULL, $entity_type = NULL) {
+  $account = isset($account) ? $account : $GLOBALS['user'];
+  if ($op === 'update' && user_access('nexteuropa manage users non restricted operations', $account)) {
+    return TRUE;
+  }
+
+  // Call the original core callback too.
+  return entity_metadata_user_access($op, $entity, $account, $entity_type);
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ *
+ * To make sure nothing will override our access callback, we need to run last.
+ * Because the entity module override the access callback, and using this
+ * technique, using weight is totally useless.
+ */
+function nexteuropa_user_management_module_implements_alter(&$implementations, $hook) {
+  if ($hook === 'entity_info_alter') {
+    // Move our hook implementation to the bottom.
+    $group = $implementations['nexteuropa_user_management'];
+    unset($implementations['nexteuropa_user_management']);
+    $implementations['nexteuropa_user_management'] = $group;
+  }
 }

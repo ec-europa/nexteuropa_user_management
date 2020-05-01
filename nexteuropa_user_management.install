@@ -23,7 +23,14 @@ function nexteuropa_user_management_install() {
     db_merge('role_permission')
       ->key(array(
         'rid' => $role->rid,
-        'permission' => 'manage users nexteuropa roles views',
+        'permission' => 'access nexteuropa user management views',
+        'module' => 'nexteuropa_user_management',
+      ))
+      ->execute();
+    db_merge('role_permission')
+      ->key(array(
+        'rid' => $role->rid,
+        'permission' => 'nexteuropa manage users non restricted operations',
         'module' => 'nexteuropa_user_management',
       ))
       ->execute();
