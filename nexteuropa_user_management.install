@@ -27,6 +27,14 @@ function nexteuropa_user_management_install() {
         'module' => 'nexteuropa_user_management',
       ))
       ->execute();
+
+    // Grant the minimal permissions to the role to be able to access the views
+    // and be usable.
+    user_role_grant_permissions($role->rid, array(
+      'access administration menu',
+      'access administration pages',
+      'view the administration theme',
+    ));
   }
   else {
     drupal_set_message(t("Special role already existing! Make sure you rename it ('$name') before install this module."), 'error');
