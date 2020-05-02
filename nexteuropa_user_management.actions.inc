@@ -33,13 +33,15 @@ function nexteuropa_user_management_action_info() {
 /**
  * Block a specific user.
  *
- * @param $entity
+ * @param object $entity
  *   (optional) An entity object; if it is provided and it has a uid property,
  *   the user with that ID is blocked.
- * @param $context
+ * @param array $context
  *   (optional) An associative array; currently not used here.
  *
  * @ingroup actions
+ *
+ * @throws \Exception
  */
 function nexteuropa_user_management_block_selected_user_action(&$entity, $context = array()) {
   // If there's no user or tries to modify himself then exit.
@@ -55,13 +57,15 @@ function nexteuropa_user_management_block_selected_user_action(&$entity, $contex
 /**
  * Unblock a specific user.
  *
- * @param $entity
+ * @param object $entity
  *   (optional) An entity object; if it is provided and it has a uid property,
  *   the user with that ID is unblocked.
- * @param $context
+ * @param array $context
  *   (optional) An associative array; currently not used here.
  *
  * @ingroup actions
+ *
+ * @throws \Exception
  */
 function nexteuropa_user_management_unblock_selected_user_action(&$entity, $context = array()) {
   // If there's no user or tries to modify himself then exit.
@@ -74,10 +78,26 @@ function nexteuropa_user_management_unblock_selected_user_action(&$entity, $cont
   watchdog('action', 'Unblock user %name.', array('%name' => $account->name));
 }
 
-
+/**
+ * Action settings form.
+ *
+ * @param array $context
+ *   Provides a context for the action form.
+ *
+ * @return array
+ *   Renderable array.
+ */
 function nexteuropa_user_management_change_user_roles_action_form($context) {
   $roles = user_roles(TRUE);
-  unset($roles[DRUPAL_AUTHENTICATED_RID]);  // Can't edit authenticated role.
+  // Can't edit authenticated role.
+  unset($roles[DRUPAL_AUTHENTICATED_RID]);
+
+  // If the current user has access to grant any role (i.e. user 1 and
+  // administrator role), it's useless to restrict here the list, however if it
+  // has no this right, restrict it.
+  if (!user_access('administer permissions')) {
+    _nexteuropa_user_management_restrict_roles($roles);
+  }
 
   $form['add_roles'] = array(
     '#type' => 'checkboxes',
@@ -95,12 +115,32 @@ function nexteuropa_user_management_change_user_roles_action_form($context) {
   return $form;
 }
 
+/**
+ * Provides a validation for the action form.
+ *
+ * @param array $form
+ *   Action form, renderable array.
+ * @param array $form_state
+ *   Action form state.
+ */
 function nexteuropa_user_management_change_user_roles_action_validate($form, $form_state) {
   if (!$form_state['values']['add_roles'] && !$form_state['values']['remove_roles']) {
     form_set_error('add_roles', t('You have not chosen any role to add or remove. Please select something to do.'));
   }
 }
 
+/**
+ * Action form submit handler, it will returns roles.
+ *
+ * @param array $form
+ *   Action form's renderable array.
+ * @param array $form_state
+ *   Action form's state.
+ *
+ * @return array
+ *   Returns the action form results. Roles to remove and add to the selected
+ *   users.
+ */
 function nexteuropa_user_management_change_user_roles_action_submit($form, $form_state) {
   return array(
     'add_roles' => array_filter($form_state['values']['add_roles']),
@@ -108,9 +148,23 @@ function nexteuropa_user_management_change_user_roles_action_submit($form, $form
   );
 }
 
+/**
+ * Add/remove roles for the 'Change user roles' action.
+ *
+ * @param object $entity
+ *   An user entity, roles will be modified on this entity.
+ * @param array $context
+ *   Determinates which roles will be added, by the 'add_roles' array key, and
+ *   which will be removed by the 'remove_roles' key. Changes will be made on
+ *   the $entity object.
+ */
 function nexteuropa_user_management_change_user_roles_action($entity, $context = array()) {
   // If there's no user or tries to modify himself then exit.
-  if (!isset($entity->uid) || $entity->uid === $GLOBALS['user']->uid) {
+  if (
+    !isset($entity->uid) ||
+    $entity->uid === $GLOBALS['user']->uid ||
+    empty($context['add_roles']) && empty($context['remove_roles'])
+  ) {
     return;
   }
 

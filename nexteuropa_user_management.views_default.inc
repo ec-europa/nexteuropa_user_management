@@ -53,7 +53,7 @@ function nexteuropa_user_management_views_default_views() {
       'empty_column' => 0,
     ),
     'name' => array(
-      'sortable' => 1,
+      'sortable' => 0,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
@@ -204,9 +204,6 @@ function nexteuropa_user_management_views_default_views() {
   $handler->display->display_options['arguments']['uid']['specify_validation'] = TRUE;
   $handler->display->display_options['arguments']['uid']['validate']['type'] = 'user';
   $handler->display->display_options['arguments']['uid']['validate_options']['restrict_roles'] = TRUE;
-  $handler->display->display_options['arguments']['uid']['validate_options']['roles'] = array(
-    9 => '9',
-  );
   $handler->display->display_options['arguments']['uid']['not'] = TRUE;
   /* Filter criterion: User: Name */
   $handler->display->display_options['filters']['uid']['id'] = 'uid';
