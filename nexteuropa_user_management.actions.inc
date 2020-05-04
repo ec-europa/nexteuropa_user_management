@@ -51,7 +51,7 @@ function nexteuropa_user_management_block_selected_user_action(&$entity, $contex
 
   $account = user_load($entity->uid);
   $account = user_save($account, array('status' => 0));
-  watchdog('action', 'User %name activated.', array('%name' => $account->name));
+  watchdog('action', 'User %name blocked.', array('%name' => $account->name));
 }
 
 /**

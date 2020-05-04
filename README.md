@@ -24,5 +24,8 @@ To exclude User management role use `<!!USER_MANAGER_RID!!>` token in the
 So to exclude as grantable role for User management user, put this into the
 settings.php:
 ```php
-$conf['nexteuropa_user_management_banned_role_ids'] = array('<!!ADMIN_RID!!>', '<!!USER_MANAGER_RID!!>');
+$conf['nexteuropa_user_management_banned_role_ids'] = array(
+  '<!!ADMIN_RID!!>',
+  '<!!USER_MANAGER_RID!!>',
+);
 ```
