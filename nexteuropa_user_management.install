@@ -31,10 +31,13 @@ function nexteuropa_user_management_requirements($phase) {
  * Implements hook_install().
  */
 function nexteuropa_user_management_install() {
+  // Ensure translations don't break during installation.
+  $t = get_t();
+
   $role = new stdClass();
   $role->name = NEXTEUROPA_USER_MANAGEMENT_USER_MANAGER_ROLE;
   if (user_role_save($role) === FALSE) {
-    drupal_set_message(t('Role creation failed!'), 'error');
+    drupal_set_message($t('Role creation failed!'), 'error');
     return;
   }
 

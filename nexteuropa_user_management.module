@@ -17,7 +17,7 @@ function nexteuropa_user_management_permission() {
     ),
     'nexteuropa manage users non restricted operations' => array(
       'title' => t('Allow to manage users with non restricted operations'),
-      'description' => t('Warning: Give to trusted roles only; this permission has security implications.'),
+      'restrict access' => TRUE,
     ),
   );
 }
