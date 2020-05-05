@@ -13,19 +13,19 @@ function nexteuropa_user_management_action_info() {
       'label' => t('Block the selected user'),
       'type' => 'user',
       'configurable' => FALSE,
-      'triggers' => array('any'),
+      'triggers' => array(),
     ),
     'nexteuropa_user_management_unblock_selected_user_action' => array(
       'label' => t('Unblock the selected user'),
       'type' => 'user',
       'configurable' => FALSE,
-      'triggers' => array('any'),
+      'triggers' => array(),
     ),
     'nexteuropa_user_management_change_user_roles_action' => array(
-      'type' => 'user',
       'label' => t('Change user roles'),
+      'type' => 'user',
       'configurable' => TRUE,
-      'triggers' => array('any'),
+      'triggers' => array(),
     ),
   );
 }
@@ -88,6 +88,11 @@ function nexteuropa_user_management_unblock_selected_user_action(&$entity, $cont
  *   Renderable array.
  */
 function nexteuropa_user_management_change_user_roles_action_form($context) {
+  if (!user_access('nexteuropa manage users non restricted operations') && !user_access('administer permissions')) {
+    drupal_set_message(t('Your user does not have access to modify user roles.'), 'error');
+    return array();
+  }
+
   $roles = user_roles(TRUE);
   // Can't edit authenticated role.
   unset($roles[DRUPAL_AUTHENTICATED_RID]);
@@ -99,6 +104,15 @@ function nexteuropa_user_management_change_user_roles_action_form($context) {
     _nexteuropa_user_management_restrict_roles($roles);
   }
 
+  if (empty($roles)) {
+    return array(
+      'message' => array(
+        '#markup' => t("There's no role which you can assign."),
+      ),
+    );
+  }
+
+  $form = array();
   $form['add_roles'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Add roles'),
@@ -159,11 +173,16 @@ function nexteuropa_user_management_change_user_roles_action_submit($form, $form
  *   the $entity object.
  */
 function nexteuropa_user_management_change_user_roles_action($entity, $context = array()) {
-  // If there's no user or tries to modify himself then exit.
+  // Silently exit if:
+  // - there's no user or
+  // - tries to modify himself or
+  // - nothing to be set or
+  // - user does not have permission to change roles.
   if (
     !isset($entity->uid) ||
     $entity->uid === $GLOBALS['user']->uid ||
-    empty($context['add_roles']) && empty($context['remove_roles'])
+    empty($context['add_roles']) && empty($context['remove_roles']) ||
+    !user_access('nexteuropa manage users non restricted operations') && !user_access('administer permissions')
   ) {
     return;
   }

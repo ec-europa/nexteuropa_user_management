@@ -2,6 +2,7 @@ name = NextEuropa User Management
 description = Provides a role with view to be able to manage the users.
 core = 7.x
 package = NextEuropa
+hidden = TRUE
 dependencies[] = ctools
 dependencies[] = entity
 dependencies[] = features
