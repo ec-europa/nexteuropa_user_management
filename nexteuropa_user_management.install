@@ -95,4 +95,11 @@ function nexteuropa_user_management_install() {
  */
 function nexteuropa_user_management_uninstall() {
   user_role_delete((int) variable_get('nexteuropa_user_management_user_manager_rid'));
+
+  // Clear up persistent variables.
+  variable_del('nexteuropa_user_management_user_manager_rid');
+  variable_del('nexteuropa_user_management_admin_notification_email');
+  variable_del('nexteuropa_user_management_admin_notification_subject');
+  variable_del('nexteuropa_user_management_admin_notification_body');
+  variable_del('nexteuropa_user_management_admin_notification_body_format');
 }

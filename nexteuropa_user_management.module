@@ -20,7 +20,28 @@ function nexteuropa_user_management_permission() {
       'title' => t('Allow to manage users with non restricted operations'),
       'restrict access' => TRUE,
     ),
+    'administer nexteuropa user management' => array(
+      'title' => t('Allow to administer user management module'),
+      'description' => t('Allows to access user management modules administration pages, like the settings page.'),
+    ),
   );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function nexteuropa_user_management_menu() {
+  $items = array();
+
+  $items['admin/config/people/nexteuropa-user-management-settings'] = array(
+    'title' => 'Nexteuropa User Management settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_nexteuropa_user_management_settings_form'),
+    'access arguments' => array('administer nexteuropa user management'),
+    'file' => 'nexteuropa_user_management.admin.inc',
+  );
+
+  return $items;
 }
 
 /**
@@ -149,5 +170,29 @@ function nexteuropa_user_management_views_default_views_alter(&$views) {
       /* Filter criterion: User: Last name (field_lastname) */
       unset($handler->display->display_options['filters']['field_lastname_value']);
     }
+  }
+}
+
+/**
+ * Implements hook_user_insert().
+ */
+function nexteuropa_user_management_user_insert(&$edit, $account, $category) {
+  // Send the notification when a new user is created and the notification
+  // e-mail address is set.
+  $mail = variable_get('nexteuropa_user_management_um_notification_email', '');
+  if ($mail !== '') {
+    drupal_mail('nexteuropa_user_management', 'neum_notification', $mail, language_default());
+  }
+}
+
+/**
+ * Implements hook_mail().
+ */
+function nexteuropa_user_management_mail($key, &$message, $params) {
+  switch ($key) {
+    case 'neum_notification':
+      $message['subject'] = token_replace(variable_get('nexteuropa_user_management_um_notification_subject'));
+      $message['body'][] = token_replace(variable_get('nexteuropa_user_management_um_notification_body')['value']);
+      break;
   }
 }
