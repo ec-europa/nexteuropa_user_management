@@ -185,7 +185,7 @@ function nexteuropa_user_management_form_views_form_nexteuropa_user_management_n
     $confirm = array();
 
     $confirm['intro'] = array(
-      '#markup' => 'The following changes will be applied:'
+      '#markup' => t('The following changes will be applied:'),
     );
 
     // This will return back to as the rid => role name pairs, respecting which
@@ -194,21 +194,21 @@ function nexteuropa_user_management_form_views_form_nexteuropa_user_management_n
     $selected_to_remove = array_intersect_key($form_state['um_roles'], $form_state['operation']->formOptions['remove_roles']);
 
     // Table header.
-    $header = array('Displayed name (ecas name)', 'Current roles');
+    $header = array(t('Displayed name (ecas name)'), t('Current roles')); //a
     if ($selected_to_add) {
-      $header[] = 'Added roles';
+      $header[] = t('Added roles');
     }
     if ($selected_to_remove) {
-      $header[] = 'Removed roles';
+      $header[] = t('Removed roles');
     }
-    $header[] = 'Result';
+    $header[] = t('Result');
     $rows = array();
 
     if (count($form_state['selection']) > 50) {
       // If we have large amount of data, then don't make comparision.
       $rows[] = array(
         array(
-          'data' => 'The comparison page only works, if the selected amount of user is not greater then 50.',
+          'data' => t('The comparison page only works, if the selected amount of user is not greater then 50.'),
           'colspan' => count($header),
         ),
       );
