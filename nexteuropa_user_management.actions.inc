@@ -194,7 +194,7 @@ function nexteuropa_user_management_form_views_form_nexteuropa_user_management_n
     $selected_to_remove = array_intersect_key($form_state['um_roles'], $form_state['operation']->formOptions['remove_roles']);
 
     // Table header.
-    $header = array(t('Displayed name (ecas name)'), t('Current roles')); //a
+    $header = array(t('Displayed name (ecas name)'), t('Current roles'));
     if ($selected_to_add) {
       $header[] = t('Added roles');
     }
@@ -237,8 +237,8 @@ function nexteuropa_user_management_form_views_form_nexteuropa_user_management_n
         // Calculate changes.
         $role_changes = _nexteuropa_user_management_calculate_roles($roles, $selected_to_add, $selected_to_remove);
 
+        // Display new (added) roles.
         if ($selected_to_add) {
-          // Display new (added) roles.
           $added_roles = array(
             'list_type' => 'ol',
             'items' => array_values($role_changes['added']),
@@ -247,8 +247,8 @@ function nexteuropa_user_management_form_views_form_nexteuropa_user_management_n
           $row[] = $role_changes['added'] ? theme('item_list', $added_roles) : '-';
         }
 
+        // Display removed roles.
         if ($selected_to_remove) {
-          // Display removed roles.
           $removed_roles = array(
             'list_type' => 'ol',
             'items' => array_values($role_changes['removed']),
@@ -259,21 +259,25 @@ function nexteuropa_user_management_form_views_form_nexteuropa_user_management_n
 
         // Display final result.
         if ($role_changes['result']) {
+          // If we have roles after the operations.
           $result_roles = array(
             'list_type' => 'ol',
             'items' => array_values($role_changes['result']),
           );
           if ($role_changes['added'] || $role_changes['removed']) {
+            // If the role was changed, then we color it.
             $result_roles['attributes'] = array('class' => array('um_role_result'));
           }
           $row[] = theme('item_list', $result_roles);
         }
         else {
+          // If we don't have roles after the operations.
           $result_roles = array(
             '#tag' => 'span',
             '#value' => '-',
           );
           if (!$role_changes['result'] && $roles) {
+            // If the role was changed, then we color it.
             $result_roles['#attributes'] = array('class' => array('um_role_result'));
           }
           $row[] = theme('html_tag', array('element' => $result_roles));
@@ -284,6 +288,7 @@ function nexteuropa_user_management_form_views_form_nexteuropa_user_management_n
       }
     }
 
+    // Add comparision table.
     $confirm['changes'] = array(
       '#theme' => 'table',
       '#header' => $header,
