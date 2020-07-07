@@ -181,7 +181,7 @@ function nexteuropa_user_management_user_insert(&$edit, $account, $category) {
   // e-mail address is set.
   $mail = variable_get('nexteuropa_user_management_um_notification_email', '');
   if ($mail !== '') {
-    drupal_mail('nexteuropa_user_management', 'neum_notification', $mail, language_default());
+    drupal_mail('nexteuropa_user_management', 'neum_notification', $mail, language_default(), array('user' => $account));
   }
 }
 
@@ -191,8 +191,8 @@ function nexteuropa_user_management_user_insert(&$edit, $account, $category) {
 function nexteuropa_user_management_mail($key, &$message, $params) {
   switch ($key) {
     case 'neum_notification':
-      $message['subject'] = token_replace(variable_get('nexteuropa_user_management_um_notification_subject'));
-      $message['body'][] = token_replace(variable_get('nexteuropa_user_management_um_notification_body')['value']);
+      $message['subject'] = token_replace(variable_get('nexteuropa_user_management_um_notification_subject'), array('user' => $params['user']));
+      $message['body'][] = token_replace(variable_get('nexteuropa_user_management_um_notification_body')['value'], array('user' => $params['user']));
       break;
   }
 }

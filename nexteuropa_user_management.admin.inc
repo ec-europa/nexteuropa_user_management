@@ -15,7 +15,12 @@ function _nexteuropa_user_management_settings_form($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Notification e-mail address for User Management Role users'),
     '#default_value' => variable_get('nexteuropa_user_management_um_notification_email', ''),
-    '#description' => t("If you need to have a notification for your User Management Role users, to notify them when a new user registered, you can set here the functional mailbox. If it's empty, no e-mail will be sent. For correct format please check the <a href='https://api.drupal.org/api/drupal/includes%21mail.inc/function/drupal_mail/7.x' target='_blank'>drupal_mail()</a> documentation."),
+    '#description' => t("If you need to have a notification for your User Management Role users, to notify them when a new user registered, you can set here the functional mailbox. If it's empty, no e-mail will be sent. For up-to-date format please check the <a href='https://api.drupal.org/api/drupal/includes%21mail.inc/function/drupal_mail/7.x' target='_blank'>drupal_mail()</a> documentation. Otherwise the following formats are accepted:<br>
+user@example.com<br>
+user@example.com,anotheruser@example.com<br>
+User &lt;user@example.com&gt;<br>
+User &lt;user@example.com&gt;,Another User &lt;anotheruser@example.com&gt;<br>
+user@example.com,Another User &lt;anotheruser@example.com&gt;"),
   );
   $form['nexteuropa_user_management_um_notification_subject'] = array(
     '#type' => 'textfield',
@@ -38,7 +43,7 @@ function _nexteuropa_user_management_settings_form($form, &$form_state) {
   if (module_exists('token')) {
     $form['nexteuropa_user_management_um_notification_body_patterns'] = array(
       '#theme' => 'token_tree',
-      '#token_types' => 'all',
+      '#token_types' => array('global_types', 'user'),
       '#dialog' => TRUE,
     );
   }
