@@ -6,6 +6,7 @@
 
 include_once 'nexteuropa_user_management.features.inc';
 include_once 'nexteuropa_user_management.actions.inc';
+include_once 'includes/nexteuropa_user_management.permissions.inc';
 
 /**
  * Implements hook_permission().
@@ -20,9 +21,12 @@ function nexteuropa_user_management_permission() {
       'title' => t('Allow to manage users with non restricted operations'),
       'restrict access' => TRUE,
     ),
+    'nexteuropa manage users purge cache' => array(
+      'title' => t('Allow to purge different type of caches'),
+    ),
     'administer nexteuropa user management' => array(
       'title' => t('Allow to administer user management module'),
-      'description' => t('Allows to access user management modules administration pages, like the settings page.'),
+      'description' => t('Allows to access user management modules administration pages, like the notification settings page.'),
     ),
   );
 }
@@ -35,10 +39,19 @@ function nexteuropa_user_management_menu() {
 
   $items['admin/config/people/nexteuropa-user-management-settings'] = array(
     'title' => 'Nexteuropa User Management settings',
+    'description' => 'Notification settings, used to notify user management users from a new user registration.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_nexteuropa_user_management_settings_form'),
     'access arguments' => array('administer nexteuropa user management'),
-    'file' => 'nexteuropa_user_management.admin.inc',
+    'file' => 'nexteuropa_user_management.settings.admin.inc',
+  );
+  $items['admin/config/development/cache'] = array(
+    'title' => 'Cache purges',
+    'description' => 'Purge different type of caches.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_nexteuropa_user_management_cache_form'),
+    'access arguments' => array('nexteuropa manage users purge cache'),
+    'file' => 'nexteuropa_user_management.cache.admin.inc',
   );
 
   return $items;
@@ -195,4 +208,71 @@ function nexteuropa_user_management_mail($key, &$message, $params) {
       $message['body'][] = token_replace(variable_get('nexteuropa_user_management_um_notification_body')['value'], array('user' => $params['user']));
       break;
   }
+}
+
+/**
+ * Checks the UM Administrator permissions.
+ *
+ * This will update UM Administrator's permissions to the current version. If a
+ * permission is not granted, then it will grant, if a permission is granted but
+ * shouldn't be, then it will revoke it.
+ *
+ * You can call this function in hook update whenever you need to update UM
+ * Administrator role and you don't want to wait until next cron run.
+ */
+function _nexteuropa_user_management_check_um_administrator_permissions() {
+  // Collect all the permissions that other modules wishes to be added to the
+  // 'UM Administrator' role.
+  $permission_wish_list = module_invoke_all('um_administrator_grant_permissions');
+  // Get our do not give permissions.
+  $do_not_give = _nexteuropa_user_management_get_do_not_give_permissions();
+  // Get all the roles' granted permissions except administrator role and
+  // itself.
+  $granted_permission_query = db_select('role_permission', 'rp');
+  $granted_permission_query->addField('rp', 'permission', 'permission');
+  $granted_permission_query->condition('rp.rid', variable_get('user_admin_role', 0), '<>');
+  $granted_permission_query->condition('rp.rid', variable_get('nexteuropa_user_management_um_administrator_rid'), '<>');
+  // Exclude defined roles if there is.
+  $exclude_roles = array_merge(variable_get('nexteuropa_user_management_exclude_roles_from_perm_grant_common', array()), variable_get('nexteuropa_user_management_exclude_roles_from_perm_grant_site', array()));
+  if (!empty($exclude_roles) && is_array($exclude_roles)) {
+    $granted_permission_query->innerJoin('role', 'r', 'r.rid = rp.rid');
+    $granted_permission_query->condition('r.name', $exclude_roles, 'NOT IN');
+  }
+  $granted_permission_query->groupBy('permission');
+  $roles_granted_permissions = $granted_permission_query->execute()->fetchAllKeyed(0, 0);
+  // Suggested permissions.
+  $suggested = _nexteuropa_user_management_get_suggested_permissions();
+  // Get our forbidden permissions.
+  $forbidden = _nexteuropa_user_management_get_forbidden_permissions();
+  // Get all the permissions that's granted for UM Administrator.
+  $um_administrator_query = db_select('role_permission', 'rp');
+  $um_administrator_query->addField('rp', 'permission', 'permission');
+  $um_administrator_query->condition('rid', variable_get('nexteuropa_user_management_um_administrator_rid'));
+  $um_administrator_permissions = $um_administrator_query->execute()->fetchAllKeyed(0, 0);
+  // Get all existing permissions.
+  $all_permissions = array_keys(module_invoke_all('permission'));
+
+  // Let's calculate out the correct permissions to be granted and revoke.
+  $to_be_granted = array_diff($permission_wish_list, $do_not_give);
+  $to_be_granted = array_merge($to_be_granted, $roles_granted_permissions, $suggested);
+  $to_be_granted = array_diff($to_be_granted, $forbidden);
+  $to_be_granted = array_intersect($to_be_granted, $all_permissions);
+  $to_be_revoke = array_diff($um_administrator_permissions, $to_be_granted);
+
+  // Execute.
+  user_role_grant_permissions(variable_get('nexteuropa_user_management_um_administrator_rid'), $to_be_granted);
+  if (!empty($to_be_revoke)) {
+    user_role_revoke_permissions(variable_get('nexteuropa_user_management_um_administrator_rid'), $to_be_revoke);
+  }
+  watchdog('nexteuropa_user_management', "UM Administrator role's permission was updated.<br /><br />Granted:<br />!grant.<br /><br />Revoked:<br />!revoke.", array(
+    '!grant' => implode(',<br />', $to_be_granted),
+    '!revoke' => implode(',<br />', $to_be_revoke),
+  ));
+}
+
+/**
+ * Implements hook_cron().
+ */
+function nexteuropa_user_management_cron() {
+  _nexteuropa_user_management_check_um_administrator_permissions();
 }
