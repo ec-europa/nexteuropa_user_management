@@ -36,6 +36,15 @@ be considered as admin and user management was set.
 The two condition above are independent from eachother, by defining role names,
 won't remove role ids' default values.
 
+# Notification for new user registration
+It's possible to set up e-mail notification if a new user registers into the
+system. By default User managers can edit this setting on the
+`/admin/config/people/nexteuropa-user-management-settings` page. Users can set
+up e-mail address(es) the subject and message to be sent. If the token module is
+enabled on the site they can include information from the newly registered user,
+by using the `[user]` token, to include information like name to know who should
+they look for. For token support view the description texts under the field.
+
 # UM Administrator role
 ## Scope
 This role is for content management and not site management, therefore it can't 
