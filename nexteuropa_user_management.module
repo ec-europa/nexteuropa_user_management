@@ -39,7 +39,7 @@ function nexteuropa_user_management_menu() {
 
   $items['admin/config/people/nexteuropa-user-management-settings'] = array(
     'title' => 'Nexteuropa User Management settings',
-    'description' => 'Notification settings, used to notify user management users from a new user registration.',
+    'description' => 'Notification settings, used to notify user management users from a new blocked user registration.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('_nexteuropa_user_management_settings_form'),
     'access arguments' => array('administer nexteuropa user management'),
@@ -192,7 +192,7 @@ function nexteuropa_user_management_views_default_views_alter(&$views) {
 function nexteuropa_user_management_token_info(){
   $data = array();
 
-  $data['tokens']['site']['nexteuropa-user-management-page'] = array(
+  $data['tokens']['site']['nexteuropa-user-management-page-url'] = array(
     'name' => t('User Management page'),
     'description' => t("The path to the Nexteuropa user management page."),
   );
@@ -214,7 +214,7 @@ function nexteuropa_user_management_tokens($type, $tokens, array $data = array()
   if ($type === 'site') {
     foreach ($tokens as $name => $original) {
       switch ($name) {
-        case 'nexteuropa-user-management-page':
+        case 'nexteuropa-user-management-page-url':
           $view = views_get_view('nexteuropa_user_management');
           $view->set_display('neum');
           $replacements[$original] =  url($view->get_path(), $url_options);
@@ -229,10 +229,10 @@ function nexteuropa_user_management_tokens($type, $tokens, array $data = array()
  * Implements hook_user_insert().
  */
 function nexteuropa_user_management_user_insert(&$edit, $account, $category) {
-  // Send the notification when a new user is created and the notification
-  // e-mail address is set.
+  // Send the notification when a new blocked user is created and the
+  // notification e-mail address is set.
   $mail = variable_get('nexteuropa_user_management_um_notification_email', '');
-  if ($mail !== '') {
+  if ($mail !== '' && empty($account->status)) {
     drupal_mail('nexteuropa_user_management', 'neum_notification', $mail, language_default(), array('user' => $account));
   }
 }

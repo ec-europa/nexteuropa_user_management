@@ -3,23 +3,23 @@ NextEuropa User Management
 # Change log
 ## V 1.2.0
 - Add a `UM Administrator` role, with specific permissions.
-- Add an email address field accesible to user management role.
-- Allow to send an e-mail for new registrations to the email adress added above
+- Add an email address field accessible to user management role.
+- Allow to send an e-mail for new registrations to the email address added above
 , if any.
-- Add a `hook_um_administrator_grant_permissions` to grant new priviledges to
-the UM adminsitrator role.
+- Add a `hook_um_administrator_grant_permissions` to grant new privileges to
+the UM Administrator role.
 
 
 ## V 1.1.0
-https://citnet.tech.ec.europa.eu/CITnet/jira/browse/NEPT-2853
+https://webgate.ec.europa.eu/CITnet/jira/browse/NEPT-2853
 - Users who can access the user management view (admin and user management
 role) can view roles that are already assigned to users.
 - Add a view to allow seeing for the selected users, the added (in green),
 removed roles (in red) and resulting state (in blue).
-- Do not allow to add and remove the same role at once.
+- Do not allow adding and removing the same role at once.
 
 ## V 1.0.0
-https://citnet.tech.ec.europa.eu/CITnet/jira/browse/NEPT-2830
+https://webgate.ec.europa.eu/CITnet/jira/browse/NEPT-2830
 
 - Create 'User management' role, to be granted to a 'user manager'. This person
 can add or remove roles to/from users.
@@ -30,7 +30,7 @@ administer roles.
 granted to the users by the user manager (blacklist).
 
 # Permissions restrictions
-To ensure more secure websistes, a series of permissions have been restricted
+To ensure more secure websites, a series of permissions have been restricted
 from usage in the platform.
 ## Forbidden permissions
 The list of permissions forbidden are listed in the "Secure Drupal development
@@ -97,12 +97,13 @@ If `nexteuropa_user_management_banned_roles` remains undefined, it will be
 considered as an empty array.  
 If the `nexteuropa_user_management_banned_role_ids` remains undefined, it will
 be considered as admin and user management was set.  
-The two condition above are independent from eachother, by defining role names,
+The two condition above are independent of eachother, by defining role names,
 won't remove role ids' default values.
 
 # Notification for new user registration
-You can set up mail notifications for new user registration.
-By default User managers can edit this setting at
+You can set up mail notifications for new (blocked) user registration. The
+module will only send e-mail if the new registered user status is blocked.
+By default, User managers can edit this setting at
 `/admin/config/people/nexteuropa-user-management-settings`.
 Users can set up e-mail address(es) to send to, the subject and message to be
 sent.
@@ -110,6 +111,8 @@ If the token module is enabled it can be user to include data from the newly
 registered user.
 ie: by using the `[user]` token, it is possible to include information like
 name to know who should they look for.
+With the `[site:nexteuropa-user-management-page-url]` token you can make a link
+to bring the user to the user management page.
 See the token description under the field.
 
 # UM Administrator role
@@ -149,8 +152,8 @@ a) `nexteuropa_user_management_exclude_roles_from_perm_grant_common` drupal
 variable for multisite 'level'  
 b) `nexteuropa_user_management_exclude_roles_from_perm_grant_site` drupal
 variable for site-specific 'level'.  
-The default value for both empty array and it waits for an array with a list of
-role names as value. If both defined the values will be merged.
+The default value for both an empty array, and it waits for an array with a list
+of role names as value. If both defined the values will be merged.
 ## Manual permission grant and revoke (or sync)
 If you can't wait until cron runs, you can call the
 `_nexteuropa_user_management_check_um_administrator_permissions()` function in

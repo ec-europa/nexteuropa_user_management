@@ -15,7 +15,7 @@ function _nexteuropa_user_management_settings_form($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Notification e-mail address for User Management Role users'),
     '#default_value' => variable_get('nexteuropa_user_management_um_notification_email', ''),
-    '#description' => t("For User Management Role users to be notified of new user registration, please set the email adress. If left empty no email will be sent. Please check the format at <a href='https://api.drupal.org/api/drupal/includes%21mail.inc/function/drupal_mail/7.x' target='_blank'>drupal_mail()</a> documentation. The following formats are accepted:<br>
+    '#description' => t("For User Management Role users to be notified of new blocked user registration, please set the email address. If left empty no email will be sent. Please check the format at <a href='https://api.drupal.org/api/drupal/includes%21mail.inc/function/drupal_mail/7.x' target='_blank'>drupal_mail()</a> documentation. The following formats are accepted:<br>
 user@example.com<br>
 user@example.com,anotheruser@example.com<br>
 User &lt;user@example.com&gt;<br>
