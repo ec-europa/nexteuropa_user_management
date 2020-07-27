@@ -175,7 +175,6 @@ function _nexteuropa_user_management_get_do_not_give_permissions() {
       'edit mimemail user settings',
       'force password change',
       'import media',
-      'import media',
       'manage feature dgt connector',
       'migration information',
       'node-specific print configuration',
@@ -193,23 +192,6 @@ function _nexteuropa_user_management_get_do_not_give_permissions() {
       'use ctools import',
       'use flag import',
       'use PHP for tracking visibility',
-      'use Rules component rules_enrd_flag_read_unread',
-      'use Rules component rules_enrd_lag_dashboard_add_new_national_manager',
-      'use Rules component rules_enrd_lag_database_set_nsu_schedule',
-      'use Rules component rules_enrd_lag_database_set_schedule',
-      'use Rules component rules_enrd_lag_database_solicit_manager_notification',
-      'use Rules component rules_enrd_lag_database_solicit_nsu_notification',
-      'use Rules component rules_enrd_moderate_content_to_archived',
-      'use Rules component rules_enrd_moderate_content_to_draft',
-      'use Rules component rules_enrd_moderate_content_to_expired',
-      'use Rules component rules_enrd_moderate_content_to_published',
-      'use Rules component rules_enrd_moderate_content_to_ready_to_be_published',
-      'use Rules component rules_ernd_moderate_content_to_archived',
-      'use Rules component rules_ernd_moderate_content_to_draft',
-      'use Rules component rules_ernd_moderate_content_to_expired',
-      'use Rules component rules_ernd_moderate_content_to_published',
-      'use Rules component rules_ernd_moderate_content_to_ready_to_be_published',
-      'use Rules component rules_unblock_user',
       'version management edits',
       'view private files',
     );
@@ -256,6 +238,15 @@ function _nexteuropa_user_management_get_do_not_give_permissions() {
         $do_not_give_permissions[] = "administer own $type_info->name registration";
         $do_not_give_permissions[] = "create $type_info->name registration";
         $do_not_give_permissions[] = "create $type_info->name registration self";
+      }
+    }
+    if (module_exists('rules')) {
+      // Fetch all components to generate the access keys.
+      $conditions['plugin'] = array_keys(rules_filter_array(rules_fetch_data('plugin_info'), 'component', TRUE));
+      $conditions['access_exposed'] = 1;
+      $components = entity_load('rules_config', FALSE, $conditions);
+      foreach ($components as $component) {
+        $do_not_give_permissions[] = "use Rules component $component->name";
       }
     }
   }

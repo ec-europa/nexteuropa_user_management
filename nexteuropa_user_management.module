@@ -187,30 +187,37 @@ function nexteuropa_user_management_views_default_views_alter(&$views) {
 }
 
 /**
- * Implements hook_token_info_alter().
+ * Implements hook_token_info().
  */
-function nexteuropa_user_management_token_info_alter(&$data){
+function nexteuropa_user_management_token_info(){
+  $data = array();
+
   $data['tokens']['site']['nexteuropa-user-management-page'] = array(
     'name' => t('User Management page'),
     'description' => t("The path to the Nexteuropa user management page."),
   );
+
+  return $data;
 }
 
 /**
  * Implements hook_tokens().
  */
 function nexteuropa_user_management_tokens($type, $tokens, array $data = array(), array $options = array()) {
-  $view = views_get_view('nexteuropa_user_management', TRUE);
-  $um_page = $view->display['neum']->display_options['path'];
   $url_options = array('absolute' => TRUE);
+  if (isset($options['language'])) {
+    $url_options['language'] = $options['language'];
+  }
 
   $replacements = array();
 
-  if ($type == 'site') {
+  if ($type === 'site') {
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'nexteuropa-user-management-page':
-          $replacements[$original] =  url($um_page, $url_options);
+          $view = views_get_view('nexteuropa_user_management');
+          $view->set_display('neum');
+          $replacements[$original] =  url($view->get_path(), $url_options);
           break;
       }
     }
@@ -236,8 +243,14 @@ function nexteuropa_user_management_user_insert(&$edit, $account, $category) {
 function nexteuropa_user_management_mail($key, &$message, $params) {
   switch ($key) {
     case 'neum_notification':
-      $message['subject'] = token_replace(variable_get('nexteuropa_user_management_um_notification_subject'), array('user' => $params['user']));
-      $message['body'][] = token_replace(variable_get('nexteuropa_user_management_um_notification_body')['value'], array('user' => $params['user']));
+      $message['subject'] = token_replace(variable_get('nexteuropa_user_management_um_notification_subject'), array(
+        'user' => $params['user'],
+        'language' => $message['language'],
+      ));
+      $message['body'][] = token_replace(variable_get('nexteuropa_user_management_um_notification_body')['value'], array(
+        'user' => $params['user'],
+        'language' => $message['language'],
+      ));
       break;
   }
 }
