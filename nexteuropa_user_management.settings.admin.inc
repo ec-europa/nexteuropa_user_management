@@ -15,7 +15,7 @@ function _nexteuropa_user_management_settings_form($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Notification e-mail address for User Management Role users'),
     '#default_value' => variable_get('nexteuropa_user_management_um_notification_email', ''),
-    '#description' => t("If you need to have a notification for your User Management Role users, to notify them when a new user registered, you can set here the functional mailbox. If it's empty, no e-mail will be sent. For up-to-date format please check the <a href='https://api.drupal.org/api/drupal/includes%21mail.inc/function/drupal_mail/7.x' target='_blank'>drupal_mail()</a> documentation. Otherwise the following formats are accepted:<br>
+    '#description' => t("For User Management Role users to be notified of new user registration, please set the email adress. If left empty no email will be sent. Please check the format at <a href='https://api.drupal.org/api/drupal/includes%21mail.inc/function/drupal_mail/7.x' target='_blank'>drupal_mail()</a> documentation. The following formats are accepted:<br>
 user@example.com<br>
 user@example.com,anotheruser@example.com<br>
 User &lt;user@example.com&gt;<br>
@@ -24,9 +24,9 @@ user@example.com,Another User &lt;anotheruser@example.com&gt;"),
   );
   $form['nexteuropa_user_management_um_notification_subject'] = array(
     '#type' => 'textfield',
-    '#title' => t("Notification e-mail's subject for User Management Role users"),
+    '#title' => t("Notification email's subject"),
     '#default_value' => variable_get('nexteuropa_user_management_um_notification_subject', 'New user registered, waiting for approval.'),
-    '#description' => t("Required if notification e-mail address is set. This field supports tokens, if the token module is installed."),
+    '#description' => t("Required if notification email address is set. This field supports tokens, when token module is enabled."),
   );
   $body_field_defaults = array(
     'value' => _nexteuropa_user_management_get_default_notification_body(),
@@ -35,9 +35,9 @@ user@example.com,Another User &lt;anotheruser@example.com&gt;"),
   $body_field = variable_get('nexteuropa_user_management_um_notification_body', $body_field_defaults);
   $form['nexteuropa_user_management_um_notification_body'] = array(
     '#type' => 'text_format',
-    '#title' => t("Notification e-mail's body for User Management Role users"),
+    '#title' => t("Notification email body"),
     '#default_value' => $body_field['value'],
-    '#description' => t('Required if notification e-mail body is set. This field supports tokens, if the token module is installed.'),
+    '#description' => t('Required if notification email body is set. This field supports tokens, when token module is enabled.'),
     '#format' => $body_field['format'],
   );
   if (module_exists('token')) {
@@ -94,8 +94,8 @@ function _nexteuropa_user_management_settings_form_validate($form, &$form_state)
  *   HTML body content.
  */
 function _nexteuropa_user_management_get_default_notification_body() {
-  return '<p>Dear User managers,</p>
-  <p>A new user registered to the site and waiting for your approval.</p>
+  return '<p>Dear User manager,</p>
+  <p>A new user registered to the site and is awaiting your approval.</p>
   <p>Kind regards,<br>
   Webmaster team</p>';
 }

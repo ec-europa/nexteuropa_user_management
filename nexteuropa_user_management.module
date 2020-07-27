@@ -187,6 +187,38 @@ function nexteuropa_user_management_views_default_views_alter(&$views) {
 }
 
 /**
+ * Implements hook_token_info_alter().
+ */
+function nexteuropa_user_management_token_info_alter(&$data){
+  $data['tokens']['site']['nexteuropa-user-management-page'] = array(
+    'name' => t('User Management page'),
+    'description' => t("The path to the Nexteuropa user management page."),
+  );
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function nexteuropa_user_management_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  $view = views_get_view('nexteuropa_user_management', TRUE);
+  $um_page = $view->display['neum']->display_options['path'];
+  $url_options = array('absolute' => TRUE);
+
+  $replacements = array();
+
+  if ($type == 'site') {
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'nexteuropa-user-management-page':
+          $replacements[$original] =  url($um_page, $url_options);
+          break;
+      }
+    }
+  }
+  return $replacements;
+}
+
+/**
  * Implements hook_user_insert().
  */
 function nexteuropa_user_management_user_insert(&$edit, $account, $category) {

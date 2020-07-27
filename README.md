@@ -1,5 +1,71 @@
 NextEuropa User Management
 
+# Change log
+## V 1.2.0
+- Add a `UM Administrator` role, with specific permissions.
+- Add an email address field accesible to user management role.
+- Allow to send an e-mail for new registrations to the email adress added above
+, if any.
+- Add a `hook_um_administrator_grant_permissions` to grant new priviledges to
+the UM adminsitrator role.
+
+
+## V 1.1.0
+https://citnet.tech.ec.europa.eu/CITnet/jira/browse/NEPT-2853
+- Users who can access the user management view (admin and user management
+role) can view roles that are already assigned to users.
+- Add a view to allow seeing for the selected users, the added (in green),
+removed roles (in red) and resulting state (in blue).
+- Do not allow to add and remove the same role at once.
+
+## V 1.0.0
+https://citnet.tech.ec.europa.eu/CITnet/jira/browse/NEPT-2830
+
+- Create 'User management' role, to be granted to a 'user manager'. This person
+can add or remove roles to/from users.
+- Create a 'user management' page where users with 'user management role' can
+administer roles.
+- Create variables 'nexteuropa_user_management_banned_roles' and
+'nexteuropa_user_management_banned_role_ids' to list roles that cannot be
+granted to the users by the user manager (blacklist).
+
+# Permissions restrictions
+To ensure more secure websistes, a series of permissions have been restricted
+from usage in the platform.
+## Forbidden permissions
+The list of permissions forbidden are listed in the "Secure Drupal development
+at the European Commission" report available on the OPENEU wiki :
+
+-  'administer content types'
+-  'administer ckeditor_lite'
+-  'acccess all views'
+-  'administer ecas'
+-  'administer features'
+-  'administer fields'
+-  'administer file types'
+-  'administer filters'
+-  'administer jquery update'
+-  'administer modules'
+-  'administer om maximenu'
+-  'administer page manager'
+-  'administer permissions'
+-  'administer site configuration'
+-  'administer software updates'
+-  'administer themes'
+-  'administer users'
+-  'administer views'
+-  'bypass file access'
+-  'bypass node access'
+-  'bypass rules access'
+
+These permissions are already forbidden in toolkit.
+## Restricted permissions
+The restricted permissions can only be added through code (see UM Administrator
+role section below for more details)
+The list of permission is held in the $do_not_give_permissions variable.
+## Suggested permissions
+The suggested permissions can be assigned to the UM Administrator role.
+
 # Setting up
 You will need to add into the settings.php one of the following to 'variable':
 ```php
@@ -7,10 +73,9 @@ $conf['nexteuropa_user_management_banned_roles'] = array();
 $conf['nexteuropa_user_management_banned_role_ids'] = array();
 ```
 
-Inside the `nexteuropa_user_management_banned_roles` include the role names
-(string type) which you want to exclude as a grantable role by User management
-users.  
-Inside the `nexteuropa_user_management_banned_role_ids` include the role ids
+`nexteuropa_user_management_banned_roles` includes the role names (string types)
+which you want to exclude as a grantable role by User management users.
+`nexteuropa_user_management_banned_role_ids` includes the role ids
 (integer type except the two exception see below) which you want to exclude as a
 grantable role by User management users. 
 
@@ -19,8 +84,7 @@ To exclude Administrator role use `<!!ADMIN_RID!!>` token in the
 To exclude User management role use `<!!USER_MANAGER_RID!!>` token in the 
 `nexteuropa_user_management_banned_role_ids` array.
 
-So to exclude as grantable role for User management user, put this into the
-settings.php:
+To exclude as grantable role for User management user, use :
 ```php
 $conf['nexteuropa_user_management_banned_role_ids'] = array(
   '<!!ADMIN_RID!!>',
@@ -37,24 +101,29 @@ The two condition above are independent from eachother, by defining role names,
 won't remove role ids' default values.
 
 # Notification for new user registration
-It's possible to set up e-mail notification if a new user registers into the
-system. By default User managers can edit this setting on the
-`/admin/config/people/nexteuropa-user-management-settings` page. Users can set
-up e-mail address(es) the subject and message to be sent. If the token module is
-enabled on the site they can include information from the newly registered user,
-by using the `[user]` token, to include information like name to know who should
-they look for. For token support view the description texts under the field.
+You can set up mail notifications for new user registration.
+By default User managers can edit this setting at
+`/admin/config/people/nexteuropa-user-management-settings`.
+Users can set up e-mail address(es) to send to, the subject and message to be
+sent.
+If the token module is enabled it can be user to include data from the newly
+registered user.
+ie: by using the `[user]` token, it is possible to include information like
+name to know who should they look for.
+See the token description under the field.
 
 # UM Administrator role
 ## Scope
-This role is for content management and not site management, therefore it can't 
-be grant by default any config related permission. In other words, it's a
-content administrator role, not a site administrator.
+This role is relevant to content management, it is not a site administrator
+role.
+It cannot be granted by default any configuration related permission.
+
 ## Automatic permission grant and revoke
 The module will automatically grant and revoke permissions from the UM
 Administrator role if it's not defined properly. If you need permission (i.e.
 custom) that's not granted yet, you can use the
 `hook_um_administrator_grant_permissions` hook to define those.
+
 ### Grant and revoke process
 It's done by cron. The following process is done:
 1. Collect permissions from `hook_um_administrator_grant_permissions`
