@@ -95,7 +95,7 @@ function _nexteuropa_user_management_settings_form_validate($form, &$form_state)
  */
 function _nexteuropa_user_management_get_default_notification_body() {
   return '<p>Dear User manager,</p>
-  <p>A new user registered to the site and is awaiting your approval.</p>
+  <p>A new user registered to the site and is awaiting your approval and is awaiting your approval here [site:nexteuropa-user-management-page-url]</p>
   <p>Kind regards,<br>
   Webmaster team</p>';
 }

@@ -17,10 +17,8 @@ function _nexteuropa_user_management_get_forbidden_permissions() {
   return array(
     'administer content types',
     'access all views',
-    'access devel information',
     'administer ckeditor_lite',
     'administer ecas',
-    'administer entityform types',
     'administer features',
     'administer fields',
     'administer file types',
@@ -38,13 +36,11 @@ function _nexteuropa_user_management_get_forbidden_permissions() {
     'bypass file access',
     'bypass node access',
     'bypass rules access',
-    'execute php code',
     'generate features',
     'manage feature nexteuropa_dgt_connector',
     'manage features',
     'rename features',
     'use page manager',
-    'use PHP for label patterns',
   );
 }
 

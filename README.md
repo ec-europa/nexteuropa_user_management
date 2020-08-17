@@ -11,7 +11,7 @@ the UM Administrator role.
 
 
 ## V 1.1.0
-https://citnet.tech.ec.europa.eu/CITnet/jira/browse/NEPT-2853
+https://webgate.ec.europa.eu/CITnet/jira/browse/NEPT-2853
 - Users who can access the user management view (admin and user management
 role) can view roles that are already assigned to users.
 - Add a view to allow seeing for the selected users, the added (in green),
@@ -19,7 +19,7 @@ removed roles (in red) and resulting state (in blue).
 - Do not allow adding and removing the same role at once.
 
 ## V 1.0.0
-https://citnet.tech.ec.europa.eu/CITnet/jira/browse/NEPT-2830
+https://webgate.ec.europa.eu/CITnet/jira/browse/NEPT-2830
 
 - Create 'User management' role, to be granted to a 'user manager'. This person
 can add or remove roles to/from users.
