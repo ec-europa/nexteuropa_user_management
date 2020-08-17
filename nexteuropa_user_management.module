@@ -189,7 +189,7 @@ function nexteuropa_user_management_views_default_views_alter(&$views) {
 /**
  * Implements hook_token_info().
  */
-function nexteuropa_user_management_token_info(){
+function nexteuropa_user_management_token_info() {
   $data = array();
 
   $data['tokens']['site']['nexteuropa-user-management-page-url'] = array(
@@ -217,7 +217,7 @@ function nexteuropa_user_management_tokens($type, $tokens, array $data = array()
         case 'nexteuropa-user-management-page-url':
           $view = views_get_view('nexteuropa_user_management');
           $view->set_display('neum');
-          $replacements[$original] =  url($view->get_path(), $url_options);
+          $replacements[$original] = url($view->get_path(), $url_options);
           break;
       }
     }

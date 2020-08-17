@@ -7,6 +7,8 @@
 define('NEXTEUROPA_USER_MANAGEMENT_USER_MANAGER_ROLE', 'User management');
 define('NEXTEUROPA_USER_MANAGEMENT_UM_ADMINISTRATOR_ROLE', 'UM Administrator');
 
+require_once 'nexteuropa_user_management.install.inc';
+
 /**
  * Implements hook_requirements().
  */
@@ -92,9 +94,7 @@ function nexteuropa_user_management_install() {
     $user_1_wrapper->save();
   }
 
-  // To not duplicate code, call the update hook directly.
-  // @codingStandardsIgnoreLine
-  nexteuropa_user_management_update_7001();
+  _nexteuropa_user_management_add_um_administrator_role();
 }
 
 /**
@@ -119,42 +119,5 @@ function nexteuropa_user_management_uninstall() {
  * NEPT-2830: Add UM Administrator role.
  */
 function nexteuropa_user_management_update_7001() {
-  // Ensure translations don't break during installation.
-  $t = get_t();
-
-  $role = new stdClass();
-  $role->name = NEXTEUROPA_USER_MANAGEMENT_UM_ADMINISTRATOR_ROLE;
-  if (user_role_save($role) === FALSE) {
-    drupal_set_message($t('%role role creation failed!', array(
-      '%role' => NEXTEUROPA_USER_MANAGEMENT_UM_ADMINISTRATOR_ROLE,
-    )), 'error');
-    return;
-  }
-
-  variable_set('nexteuropa_user_management_um_administrator_rid', $role->rid);
-  _nexteuropa_user_management_check_um_administrator_permissions();
-
-  // In case of install the permission is still unknown by drupal, so we need to
-  // add it manually.
-  db_merge('role_permission')
-    ->key(array(
-      'rid' => $role->rid,
-      'permission' => 'nexteuropa manage users purge cache',
-      'module' => 'nexteuropa_user_management',
-    ))
-    ->execute();
-  db_merge('role_permission')
-    ->key(array(
-      'rid' => $role->rid,
-      'permission' => 'administer nexteuropa user management',
-      'module' => 'nexteuropa_user_management',
-    ))
-    ->execute();
-  db_merge('role_permission')
-    ->key(array(
-      'rid' => variable_get('nexteuropa_user_management_user_manager_rid'),
-      'permission' => 'administer nexteuropa user management',
-      'module' => 'nexteuropa_user_management',
-    ))
-    ->execute();
+  _nexteuropa_user_management_add_um_administrator_role();
 }
