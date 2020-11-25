@@ -59,7 +59,7 @@ user@example.com,Another User &lt;anotheruser@example.com&gt;"),
  * @param array $form_state
  *   Contains the form's state.
  */
-function _nexteuropa_user_management_settings_form_validate($form, &$form_state) {
+function _nexteuropa_user_management_settings_form_validate(array $form, array &$form_state) {
   if ($form_state['values']['nexteuropa_user_management_um_notification_email'] !== '') {
     $matches = array();
     // This regex check the e-mail address to be comply with the RFC 5322
