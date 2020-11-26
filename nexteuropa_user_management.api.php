@@ -22,3 +22,15 @@ function hook_um_administrator_grant_permissions() {
     /* ... */
   );
 }
+
+/**
+ * Allow modules to block additional permissions.
+ *
+ * @return array
+ *   An array of permissions that won't be allowed to assign.
+ */
+function hook_user_block_permissions() {
+  return array(
+    'execute php code',
+  );
+}

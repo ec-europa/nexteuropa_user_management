@@ -5,7 +5,6 @@
  * This file contains helper functions for the install process.
  */
 
-
 /**
  * Create UM Administrator role.
  *

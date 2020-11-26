@@ -14,7 +14,7 @@
  *   Forbidden permissions.
  */
 function _nexteuropa_user_management_get_forbidden_permissions() {
-  return array(
+  $forbidden = array(
     'administer content types',
     'access all views',
     'administer ckeditor_lite',
@@ -42,6 +42,8 @@ function _nexteuropa_user_management_get_forbidden_permissions() {
     'rename features',
     'use page manager',
   );
+  $forbidden = array_unique(array_merge($forbidden, module_invoke_all('user_block_permissions')));
+  return $forbidden;
 }
 
 /**
