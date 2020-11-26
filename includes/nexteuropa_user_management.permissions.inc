@@ -2,7 +2,7 @@
 
 /**
  * @file
- * This file file contains some of the pre defined permissions.
+ * This file contains some of the pre defined permissions.
  */
 
 /**
