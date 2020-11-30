@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Code for the NextEuropa Manage Roles feature, implemented actions.
@@ -140,7 +141,7 @@ function nexteuropa_user_management_change_user_roles_action_form(array $context
  * @param array $form_state
  *   Action form state.
  */
-function nexteuropa_user_management_change_user_roles_action_validate($form, $form_state) {
+function nexteuropa_user_management_change_user_roles_action_validate(array $form, array $form_state) {
   $add_roles = array_filter($form_state['values']['add_roles']);
   $remove_roles = array_filter($form_state['values']['remove_roles']);
   if (!$add_roles && !$remove_roles) {
@@ -318,7 +319,7 @@ function nexteuropa_user_management_form_views_form_nexteuropa_user_management_n
  *   It returns in the array an added roles array keyed by 'added' a removed
  *   roles array keyed by 'removed' and a result roles array keyed by 'result'.
  */
-function _nexteuropa_user_management_calculate_roles($original, $add, $remove) {
+function _nexteuropa_user_management_calculate_roles(array $original, array $add, array $remove) {
   $removed = array();
   $added = array();
   $roles = $original;
