@@ -43,7 +43,7 @@ function nexteuropa_user_management_action_info() {
  *
  * @throws \Exception
  */
-function nexteuropa_user_management_block_selected_user_action(&$entity, $context = array()) {
+function nexteuropa_user_management_block_selected_user_action(&$entity, array $context = array()) {
   // If there's no user or tries to modify himself then exit.
   if (!isset($entity->uid) || $entity->uid === $GLOBALS['user']->uid) {
     return;
@@ -67,7 +67,7 @@ function nexteuropa_user_management_block_selected_user_action(&$entity, $contex
  *
  * @throws \Exception
  */
-function nexteuropa_user_management_unblock_selected_user_action(&$entity, $context = array()) {
+function nexteuropa_user_management_unblock_selected_user_action(&$entity, array $context = array()) {
   // If there's no user or tries to modify himself then exit.
   if (!isset($entity->uid) || $entity->uid === $GLOBALS['user']->uid) {
     return;
@@ -87,7 +87,7 @@ function nexteuropa_user_management_unblock_selected_user_action(&$entity, $cont
  * @return array
  *   Renderable array.
  */
-function nexteuropa_user_management_change_user_roles_action_form($context, &$form_state) {
+function nexteuropa_user_management_change_user_roles_action_form(array $context, &$form_state) {
   if (!user_access('nexteuropa manage users non restricted operations') && !user_access('administer permissions')) {
     drupal_set_message(t('Your user does not have access to modify user roles.'), 'error');
     return array();
@@ -168,7 +168,7 @@ function nexteuropa_user_management_change_user_roles_action_validate($form, $fo
  *   Returns the action form results. Roles to remove and add to the selected
  *   users.
  */
-function nexteuropa_user_management_change_user_roles_action_submit($form, $form_state) {
+function nexteuropa_user_management_change_user_roles_action_submit(array $form, array $form_state) {
   return array(
     'add_roles' => array_filter($form_state['values']['add_roles']),
     'remove_roles' => array_filter($form_state['values']['remove_roles']),
@@ -348,7 +348,7 @@ function _nexteuropa_user_management_calculate_roles($original, $add, $remove) {
  *   which will be removed by the 'remove_roles' key. Changes will be made on
  *   the $entity object.
  */
-function nexteuropa_user_management_change_user_roles_action($entity, $context = array()) {
+function nexteuropa_user_management_change_user_roles_action($entity, array $context = array()) {
   // Silently exit if:
   // - there's no user or
   // - tries to modify himself or
